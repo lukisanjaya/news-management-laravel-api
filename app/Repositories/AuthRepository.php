@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Http\Controllers\Api\ApiResponse;
+use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use App\Interfaces\AuthInterface;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class AuthRepository implements AuthInterface
      */
     public function me()
     {
-        return ApiResponse::successItem($this->guard()->user());
+        return ApiResponse::successItem(new AuthResource($this->guard()->user()));
     }
 
     /**
