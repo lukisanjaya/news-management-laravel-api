@@ -14,6 +14,13 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        app('db')->listen(function($query) {
+            app('log')->info(
+                $query->sql,
+                $query->bindings,
+                $query->time
+            );
+        });
     }
 
     /**
