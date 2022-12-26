@@ -44,7 +44,7 @@ class TagRequest extends FormRequest
         throw new HttpResponseException(response()->json([
             'success' => false,
             'message' => 'Validation Errors',
-            'data'    => $validator->errors()
+            'errors'    => $validator->errors()
         ], Response::HTTP_BAD_REQUEST));
     }
 }
