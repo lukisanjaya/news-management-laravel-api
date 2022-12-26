@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Http\Controllers\Api\ApiResponse;
+use App\Http\Requests\AuthRequest;
 use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use App\Interfaces\AuthInterface;
@@ -14,11 +15,11 @@ class AuthRepository implements AuthInterface
     /**
      * Get a JWT token via given credentials.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\AuthRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function login(AuthRequest $request)
     {
         $credentials = $request->only('email', 'password');
 

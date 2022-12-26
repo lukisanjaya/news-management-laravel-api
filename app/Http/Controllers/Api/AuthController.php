@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthRequest;
 use App\Interfaces\AuthInterface;
 
 class AuthController extends Controller
@@ -18,11 +19,11 @@ class AuthController extends Controller
     /**
      * Get a JWT token via given credentials.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\AuthRequest  $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function login(AuthRequest $request)
     {
         return $this->authInterface->login($request);
     }

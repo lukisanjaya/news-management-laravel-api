@@ -1,7 +1,7 @@
 <?php
 namespace App\Interfaces;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\AuthRequest;
 
 interface AuthInterface
 {
@@ -9,10 +9,10 @@ interface AuthInterface
      * get a JWT via given credentials.
      *
      * @method POST api/auth/login
-     * @param \Illuminate\Http\Request  $request
+     * @param \App\Http\Requests\AuthRequest  $request
      * @access public
      */
-    public function login(Request $request);
+    public function login(AuthRequest $request);
 
     public function me();
 
