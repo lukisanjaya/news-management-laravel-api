@@ -36,6 +36,17 @@ Route::prefix('tag')->group(function () {
     });
 });
 
+Route::prefix('subcategory')->group(function () {
+    Route::get('/', 'Api\SubCategoryController@index');
+    Route::get('{id}', 'Api\SubCategoryController@show');
+
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/', 'Api\SubCategoryController@store');
+        Route::put('{id}', 'Api\SubCategoryController@update');
+        Route::delete('{id}', 'Api\SubCategoryController@destroy');
+    });
+});
+
 Route::group([
 
     'middleware' => 'api',
