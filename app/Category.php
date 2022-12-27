@@ -10,10 +10,8 @@ class Category extends Model
     public $timestamps = false;
     protected $fillable = ['name', 'slug'];
 
-    // public function setSlugAttribute($slug)
-    // {
-    //     if (!empty($slug)) {
-    //         $this->attribute['slug'] = Str::slug($slug);
-    //     }
-    // }
+    public function subcategory()
+    {
+        return $this->hasMany(SubCategory::class);
+    }
 }
