@@ -10,6 +10,7 @@ use App\Http\Resources\TagResource;
 use App\Interfaces\TagInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class TagRepository implements TagInterface
@@ -18,6 +19,15 @@ class TagRepository implements TagInterface
     {
         $perPage = $request->limit ?? 20;
         $perPage = $perPage > 50 ? 20 : $perPage;
+
+        $keyRedis = 'category:collection:' . $perPage . ':' . json_encode($request->only(['q']));
+        if (Cache::has($keyRedis)) {
+            $respond  = json_decode(Cache::get($keyRedis));
+            if (!empty($respond)) {
+                return response()->json($respond, Response::HTTP_OK);
+            }
+        }
+
         $tag = Tag::orderBy('name', 'asc');
 
         if ($request->get('q')) {
@@ -27,18 +37,32 @@ class TagRepository implements TagInterface
         $tag = $tag->paginate($perPage);
 
         $respond  = new TagCollection($tag);
+        if ($tag->count()) {
+            Cache::put($keyRedis, json_encode($respond), now()->addMinutes(2));
+        }
 
         return response()->json($respond, ($respond->count() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND));
     }
 
     public function getTagById($id)
     {
+        $keyRedis = 'tag:item:' . $id;
+        if (Cache::has($keyRedis)) {
+            $respond = json_decode(Cache::get($keyRedis));
+            if (!empty($respond)) {
+                return response()->json($respond, Response::HTTP_OK);
+            }
+        }
+
         try {
             $tag = Tag::findOrFail($id);
 
             $respond  = new TagResource($tag);
+            if ($tag->count()) {
+                Cache::put($keyRedis, json_encode($respond), now()->addMinutes(2));
+            }
 
-            return response()->json($respond, ($respond->count() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND));
+            return response()->json($respond, ($tag->count() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND));
         } catch (\Throwable $th) {
             return ApiResponse::notFound();
         }

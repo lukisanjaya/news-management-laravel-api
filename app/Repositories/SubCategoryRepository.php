@@ -10,39 +10,58 @@ use App\Http\Resources\SubCategoryResource;
 use App\Interfaces\SubCategoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class SubCategoryRepository implements SubCategoryInterface
 {
     public function getAllSubCategory(Request $request)
     {
-        $perPage  = $request->limit ?? 20;
-        $perPage  = $perPage > 50 ? 20 : $perPage;
-        $subCategory = DB::table('subcategories as sc')
-                        ->join('categories as c', 'sc.category_id', '=', 'c.id')
-                        ->select(['sc.id', 'sc.name', 'sc.slug','c.id as category_id', 'c.name as category_name'])
-                        ->orderBy('sc.name', 'asc');
+        $perPage     = $request->limit ?? 20;
+        $perPage     = $perPage > 50 ? 20 : $perPage;
+
+        $keyRedis = 'subcategory:collection:' . $perPage . ':' . json_encode($request->only(['q', 'slug', 'category_id', 'category_slug', 'tag_id', 'tag_slug', 'subcategory_id', 'subcategory_slug']));
+        if (Cache::has($keyRedis)) {
+            $respond  = json_decode(Cache::get($keyRedis));
+            if (!empty($respond)) {
+                return response()->json($respond, Response::HTTP_OK);
+            }
+        }
+        $subCategory = SubCategory::with('category')->orderBy('name', 'asc');
 
         if ($request->get('q')) {
             $subCategory = $subCategory->where('sc.name', 'like', '%'. $request->get('q') . '%');
         }
 
         $subCategory = $subCategory->paginate($perPage);
-        // dd($subCategory);
-        $respond  = new SubCategoryCollection($subCategory);
+        $respond     = new SubCategoryCollection($subCategory);
 
+        if ($subCategory->count()) {
+            Cache::put($keyRedis, json_encode($respond), now()->addMinutes(2));
+        }
         return response()->json($respond, ($respond->count() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND));
     }
 
     public function getSubCategoryById($id)
     {
+        $keyRedis = 'subcategory:item:' . $id;
+        if (Cache::has($keyRedis)) {
+            $respond = json_decode(Cache::get($keyRedis));
+            if (!empty($respond)) {
+                return response()->json($respond, Response::HTTP_OK);
+            }
+        }
+
         try {
             $subCategory = SubCategory::findOrFail($id);
 
             $respond  = new SubCategoryResource($subCategory);
-
-            return response()->json($respond, ($respond->count() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND));
+            if ($subCategory->count()) {
+                Cache::put($keyRedis, json_encode($respond), now()->addMinutes(2));
+            }
+            return response()->json($respond, ($subCategory->count() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND));
         } catch (\Throwable $th) {
             return ApiResponse::notFound();
         }

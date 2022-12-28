@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Http\Controllers\Api\ApiResponse;
 use App\Http\Requests\AuthRequest;
 use App\Http\Resources\AuthResource;
-use Illuminate\Http\Request;
 use App\Interfaces\AuthInterface;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
@@ -27,7 +26,7 @@ class AuthRepository implements AuthInterface
             return $this->respondWithToken($token);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
 
     /**
@@ -75,7 +74,7 @@ class AuthRepository implements AuthInterface
             'token_type'   => 'bearer',
             'expires_in'   => $this->guard()->factory()->getTTL() * 24
         ];
-        return ApiResponse::successItem($data, 'Successfully logged out');
+        return ApiResponse::successItem($data, 'Successfully logged in');
     }
 
     /**
