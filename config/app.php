@@ -176,9 +176,11 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Providers\TagServiceProvider::class,
+        App\Providers\NewsServiceProvider::class,
         App\Providers\CategoryServiceProvider::class,
         App\Providers\SubCategoryServiceProvider::class,
         App\Providers\AuthJwtServiceProvider::class,
+
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
     ],
 

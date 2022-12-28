@@ -10,10 +10,8 @@ class Tag extends Model
     public    $timestamps = false;
     protected $fillable   = ['name', 'slug'];
 
-    // public function setSlugAttribute($slug)
-    // {
-    //     if (!empty($slug)) {
-    //         $this->attribute['slug'] = Str::slug($slug);
-    //     }
-    // }
+    public function news()
+    {
+        return $this->belongsToMany(News::class, 'news_tag');
+    }
 }

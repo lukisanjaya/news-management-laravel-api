@@ -63,4 +63,9 @@ class User extends Authenticatable implements JWTSubject
             $this->attributes['password'] = bcrypt($password);
         }
     }
+
+    public function news()
+    {
+        return $this->hasMany(News::class);
+    }
 }
