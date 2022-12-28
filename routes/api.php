@@ -13,7 +13,6 @@ use App\Http\Middleware\CheckRedaktur;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-/*
 
 Route::prefix('category')->group(function () {
     Route::get('/', 'Api\CategoryController@index');
@@ -70,7 +69,7 @@ Route::prefix('subcategory')->group(function () {
         });
     });
 });
-*/
+
 Route::group([
 
     'middleware' => 'api',
