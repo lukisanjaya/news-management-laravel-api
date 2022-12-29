@@ -32,7 +32,7 @@ class SubCategoryRepository implements SubCategoryInterface
         $subCategory = SubCategory::with('category')->orderBy('name', 'asc');
 
         if ($request->get('q')) {
-            $subCategory = $subCategory->where('sc.name', 'like', '%'. $request->get('q') . '%');
+            $subCategory = $subCategory->where('sc.name', 'like', '%' . $request->get('q') . '%');
         }
 
         $subCategory = $subCategory->paginate($perPage);
@@ -96,6 +96,8 @@ class SubCategoryRepository implements SubCategoryInterface
             $subCategory->slug = $slug;
             $subCategory->save();
 
+            Cache::forget('subcategory:item:' . $id);
+
             $respond = new SubCategoryResource($subCategory);
             return response()->json($respond, Response::HTTP_OK);
         } catch (\Throwable $th) {
@@ -107,6 +109,8 @@ class SubCategoryRepository implements SubCategoryInterface
     {
         try {
             SubCategory::destroy($id);
+            Cache::forget('subcategory:item:' . $id);
+
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('Category Not Found');

@@ -94,6 +94,8 @@ class CategoryRepository implements CategoryInterface
             $category->slug = $slug;
             $category->save();
 
+            Cache::forget('category:item:' . $id);
+
             $respond = new CategoryResource($category);
             return response()->json($respond, Response::HTTP_OK);
         } catch (\Throwable $th) {
@@ -105,6 +107,8 @@ class CategoryRepository implements CategoryInterface
     {
         try {
             Category::destroy($id);
+            Cache::forget('category:item:' . $id);
+
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('Category Not Found');

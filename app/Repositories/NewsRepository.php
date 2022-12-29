@@ -170,6 +170,8 @@ class NewsRepository implements NewsInterface
             $news->fill($requestData);
             $news->save();
 
+            Cache::forget('news:item:' . $id);
+
             $respond = new NewsResource($news);
             return response()->json($respond, Response::HTTP_OK);
         } catch (\Throwable $th) {
@@ -181,6 +183,8 @@ class NewsRepository implements NewsInterface
     {
         try {
             News::destroy($id);
+            Cache::forget('news:item:' . $id);
+
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('News Not Found');

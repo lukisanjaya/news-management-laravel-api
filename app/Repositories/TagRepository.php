@@ -96,6 +96,8 @@ class TagRepository implements TagInterface
             $tag->slug = $slug;
             $tag->save();
 
+            Cache::forget('tag:item:' . $id);
+
             $respond = new TagResource($tag);
             return response()->json($respond, Response::HTTP_OK);
         } catch (\Throwable $th) {
@@ -107,6 +109,8 @@ class TagRepository implements TagInterface
     {
         try {
             Tag::destroy($id);
+            Cache::forget('tag:item:' . $id);
+
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('Tag Not Found');
