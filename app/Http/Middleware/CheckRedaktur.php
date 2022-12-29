@@ -17,7 +17,7 @@ class CheckRedaktur
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::guard()->user()->roles == 'REDAKTUR') {
+        if (Auth::guard()->user()->roles == 'REDAKTUR' || Auth::guard()->user()->roles == 'ADMIN') {
             return $next($request);
         }
 

@@ -180,8 +180,7 @@ class NewsRepository implements NewsInterface
     public function deleteNews(int $id)
     {
         try {
-            $news = News::findOrFail($id);
-            $news->delete();
+            News::destroy($id);
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('News Not Found');

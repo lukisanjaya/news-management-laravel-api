@@ -104,8 +104,7 @@ class CategoryRepository implements CategoryInterface
     public function deleteCategory(int $id)
     {
         try {
-            $category = Category::findOrFail($id);
-            $category->delete();
+            Category::destroy($id);
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('Category Not Found');

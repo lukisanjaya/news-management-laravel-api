@@ -106,8 +106,7 @@ class SubCategoryRepository implements SubCategoryInterface
     public function deleteSubCategory(int $id)
     {
         try {
-            $subCategory = SubCategory::findOrFail($id);
-            $subCategory->delete();
+            SubCategory::destroy($id);
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('Category Not Found');

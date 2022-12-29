@@ -106,8 +106,7 @@ class TagRepository implements TagInterface
     public function deleteTag(int $id)
     {
         try {
-            $tag = Tag::findOrFail($id);
-            $tag->delete();
+            Tag::destroy($id);
             return ApiResponse::successDelete();
         } catch (\Throwable $th) {
             return ApiResponse::badRequest('Tag Not Found');
