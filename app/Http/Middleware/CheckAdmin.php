@@ -17,8 +17,10 @@ class CheckAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::guard()->user()->roles == 'ADMIN') {
-            return $next($request);
+        if (isset(Auth::guard()->user()->roles)) {
+            if (Auth::guard()->user()->roles == 'ADMIN') {
+                return $next($request);
+            }
         }
 
         return response()->json(
